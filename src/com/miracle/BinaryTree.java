@@ -1,72 +1,79 @@
 package com.miracle;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-public class BinaryTree {
+public final class BinaryTree {	
 	public static void main(String[] args) {
-		double n;
+		int n;
+		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
-		n = Double.valueOf(scanner.nextInt());
-		for (int i=1; i<=n; i++) {
-			for (int j=1; j<Math.pow(2, i); j++) {
-				if (i == 1 && j == 1) {
-					System.out.println("case " + i + ":" + 1);
-				} else {
-					Place place = new Place(i, j);
-					Place parent = getParentPlace(place);
-					if (j%2 == 1) {
-						System.out.println("case " + i + ":" + parent.left + "/" + (parent.left + parent.right));
-					} else {
-						System.out.println("case " + i + ":" + (parent.left + parent.right) + "/" + parent.right);
-					}
-				}
-			}
+		n = scanner.nextInt();
+		
+		int[] a = new int[n];
+		for (int i=0; i<n; i++) {
+			a[i] = scanner.nextInt();
+		}
+		for (int k=0; k<n; k++) {
+			Node node = getNode(a[k]);
+			List<Node> list = getNodeList(node);
+			System.out.println("Case " + (k+1) + ": " + list.get(0).lValue + "/" + list.get(0).rValue);
 		}
 		return;
-	}	
+	}
 	
-	private static Place getPlace(double n) {
-		Place place = new Place();
-		for (int i=1; i<=n; i++) {
-			if (n == Math.pow(2, i)-1) {
-				place.left = i;
-				place.right = Math.pow(2, i-1);
-				return place;
-			} else if (n > Math.pow(2, i)-1 && n < Math.pow(2, i+1)-1) {
-				place.left = i+1;
-				place.right = n - Math.pow(2, i)+1;
-				return place;
+	private static Node getNode(int n) {
+		int a = log(n, 2);
+		if (Math.pow(2, a) == n) {
+			return new Node(a+1, 1);
+		} else {
+			return new Node(a+1, n-(int)Math.pow(2, a) + 1);
+		}
+	}
+	
+	private static Node getParent(Node node) {
+		Node parent = new Node();
+		parent.left = node.left-1;
+		parent.right = node.right%2 == 0 ? node.right/2 : node.right/2 + 1;
+		return parent;
+	}
+	
+	private static List<Node> getNodeList(Node node) {
+		List<Node> list = new ArrayList<Node>();
+		list.add(node);
+		while (!(node.left==1 && node.right==1)) {
+			node = getParent(node);
+			list.add(node);
+		}
+		for (int i=list.size()-2; i>=0; i--) {
+			if (list.get(i).right % 2 == 1) {
+				list.get(i).lValue = list.get(i+1).lValue;
+				list.get(i).rValue = list.get(i+1).lValue + list.get(i+1).rValue;
+			} else {
+				list.get(i).lValue = list.get(i+1).lValue + list.get(i+1).rValue;
+				list.get(i).rValue = list.get(i+1).rValue;
 			}
 		}
-		return place;
-	}
-	
-	private static Place getParentPlace(Place place) {
-		Place parent = new Place();
-		parent.left = place.left-1;
-		parent.right = place.right % 2 == 0 ? place.right / 2 : place.right/2 + 1;
-		return place;
-	}
-	
-	private static Place getLeftSonPlace(Place place) {
-		Place son = new Place();
-		son.left = place.left + 1;
-		son.right = 2*place.right - 1;
-		return son;
-	}
-	
-	private static Place getRightSonPlace(Place place) {
-		Place son = new Place();
-		son.left = place.left + 1;
-		son.right = 2*place.right;
-		return son;
-	}
+		return list;
+	}	
 
-	static class Place {
-		double left;
-		double right;
-		public Place() {}
-		public Place(int left, int right) {
+	private static int log(int num, int base) {
+		int res = 0;
+		while (num >= 2) {
+			num = num / 2;
+			res++;
+		}
+		return res;
+	}
+	
+	private static class Node {
+		int left;
+		int right;
+		int lValue = 1;
+		int rValue = 1;
+		public Node() {}
+		public Node(int left, int right) {
 			this.left = left;
 			this.right = right;
 		}
