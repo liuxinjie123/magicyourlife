@@ -231,8 +231,10 @@ public class FillNineForm {
                 l += 2;
             }
         }
-        for (int i=0; i<size+3; i++) {
-            if ()
+        for (int i=0; i<size; i++) {
+            if (intBuf[i][l] != 0) {
+                temp.remove(intBuf[i][l]);
+            }
         }
 
         if (node.type == 1) {
