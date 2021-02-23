@@ -60,6 +60,13 @@ public class FillNineForm {
             System.out.println();
         }
 
+        for (int i=0; i<size+3; i++){
+            for (int j=0; j<size; j++) {
+                System.out.print(intBuf[i][j]);
+            }
+            System.out.println();
+        }
+
         int count = 0;
         while (count < 36) {
             count = 0;
