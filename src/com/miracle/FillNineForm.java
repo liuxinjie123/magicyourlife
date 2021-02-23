@@ -60,8 +60,8 @@ public class FillNineForm {
             System.out.println();
         }
 
-        for (int i=0; i<size+3; i++){
-            for (int j=0; j<size; j++) {
+        for (int i=0; i<size; i++){
+            for (int j=0; j<size+3; j++) {
                 System.out.print(intBuf[i][j]);
             }
             System.out.println();
@@ -131,7 +131,7 @@ public class FillNineForm {
     static class Node {
         int row;
         int column;
-        // 1 一个值， 2， 2个值，分左右值
+        // 1 涓�涓�硷紝 2锛� 2涓�硷紝鍒嗗乏鍙冲��
         int type;
         int value;
         int left;
@@ -153,7 +153,7 @@ public class FillNineForm {
             add(8);
             add(9);
         }};
-        // 删除同行中已存在的数字
+        // 鍒犻櫎鍚岃涓凡瀛樺湪鐨勬暟瀛�
         for (int i=0; i<size; i++) {
             if (i == node.column) {
                 continue;
@@ -177,7 +177,7 @@ public class FillNineForm {
                 }
             }
         }
-        // 删除同列的元素
+        // 鍒犻櫎鍚屽垪鐨勫厓绱�
         for (int i=0; i<size; i++) {
             if (i == node.row) {
                 continue;
@@ -202,7 +202,7 @@ public class FillNineForm {
             }
         }
 
-        // 删除小方框中的元素
+        // 鍒犻櫎灏忔柟妗嗕腑鐨勫厓绱�
         int left = node.row <= 1 ? 0 : (node.row <= 3 ? 2 : 4);
         int right = node.column <= 2 ? 0 : 3;
 
@@ -229,7 +229,7 @@ public class FillNineForm {
             }
         }
 
-        // 删除数据 intBuf 中，行列重复的
+        // 鍒犻櫎鏁版嵁 intBuf 涓紝琛屽垪閲嶅鐨�
         int l = 0;
         for (int i=0; i<=node.column; i++) {
             if (buf[node.row][i].type == 1) {
@@ -238,6 +238,7 @@ public class FillNineForm {
                 l += 2;
             }
         }
+        l -= 1;
         for (int i=0; i<size; i++) {
             if (intBuf[i][l] != 0) {
                 temp.remove(intBuf[i][l]);
