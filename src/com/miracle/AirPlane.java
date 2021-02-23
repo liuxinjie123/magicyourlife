@@ -22,17 +22,17 @@ public class AirPlane {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int n = scanner.nextInt();
-        List<Main.Country> countryList = new ArrayList<>();
+        List<Country> countryList = new ArrayList<>();
         for (int i=0; i<n; i++) {
-            Main.Country country = new Main.Country();
+            Country country = new Country();
             country.cityCount = scanner.nextInt();
             country.airLineCount = scanner.nextInt();
             if (0 != country.airLineCount) {
-                List<Main.AirLine> airLineList = new ArrayList<>();
+                List<AirLine> airLineList = new ArrayList<>();
                 for (int j=0; j<country.airLineCount; j++) {
                     int from = scanner.nextInt();
                     int to = scanner.nextInt();
-                    airLineList.add(new Main.AirLine(from, to));
+                    airLineList.add(new AirLine(from, to));
                 }
                 country.airLineList = airLineList;
             }
@@ -45,15 +45,15 @@ public class AirPlane {
         return;
     }
 
-    private static void checkAirLine(List<Main.Country> countryList) {
+    private static void checkAirLine(List<Country> countryList) {
         loop:
         for (int i=1; i<=countryList.size(); i++) {
-            Main.Country country = countryList.get(i-1);
+            Country country = countryList.get(i-1);
             if (country.airLineCount == 0) {
                 System.out.println("Case " + i + ": YES");
                 continue loop;
             } else {
-                for (Main.AirLine airLine : country.airLineList) {
+                for (AirLine airLine : country.airLineList) {
                     if (checkIfExists(airLine, country.airLineList)) {
                         System.out.println("Case " + i + ": YES");
                         continue loop;
@@ -64,8 +64,8 @@ public class AirPlane {
         }
     }
 
-    static boolean checkIfExists(Main.AirLine air, List<Main.AirLine> airLineList) {
-        for (Main.AirLine airLine : airLineList) {
+    static boolean checkIfExists(AirLine air, List<AirLine> airLineList) {
+        for (AirLine airLine : airLineList) {
             if (airLine.from == air.from) {
                 continue;
             } else {
@@ -87,7 +87,7 @@ public class AirPlane {
     static class Country {
         int cityCount;
         int airLineCount;
-        List<Main.AirLine> airLineList;
+        List<AirLine> airLineList;
     }
 
     static class AirLine {

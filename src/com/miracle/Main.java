@@ -1,23 +1,17 @@
 package com.miracle;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Set;
 
 public final class Main {
 	static int size = 6;
 	static Node[][] buf = new Node[size][size];
-	static Set<Integer> valSet = new HashSet<Integer>();
-	public static void main(String[] args) {
-		valSet.add(1);
-		valSet.add(2);
-		valSet.add(3);
-		valSet.add(4);
-		valSet.add(5);
-		valSet.add(6);
-		valSet.add(7);
-		valSet.add(8);
-		valSet.add(9);
 
+	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
+		String content = scanner.next();
 		for (int i=0; i<size; i++) {
 			for (int j=0; j<size; j++) {
 				Node node = new Node();
@@ -27,12 +21,12 @@ public final class Main {
 				if (str.contains("/")) {
 					String[] nums = str.split("/");
 					node.type = 2;
-					node.left = nums[0].equals("-") ? 0:Integer.valueOf(nums[0]);
-					node.right = nums[1].equals("-") ? 0:Integer.valueOf(nums[1]);
+					node.left = nums[0].equals("-") ? 0: Integer.valueOf(nums[0]).intValue();
+					node.right = nums[1].equals("-") ? 0: Integer.valueOf(nums[1]).intValue();
 					buf[i][j] = node;
 				} else {
 					node.type = 1;
-					node.value = str.equals("-") ? 0:Integer.valueOf(str);
+					node.value = str.equals("-") ? 0:Integer.valueOf(str).intValue();
 					buf[i][j] = node;
 				}
 			}
@@ -94,6 +88,17 @@ public final class Main {
 	}
 
 	static Node findRightValue(Node node) {
+		Set<Integer> valSet = new HashSet<Integer>(){{
+			add(1);
+			add(2);
+			add(3);
+			add(4);
+			add(5);
+			add(6);
+			add(7);
+			add(8);
+			add(9);
+		}};
 		if (node.isNotEmpty()) {
 			return node;
 		}
@@ -140,7 +145,8 @@ public final class Main {
 		}
 		if (node.type == 1) {
 			if (temp.size() == 1) {
-				node.value = (int) temp.toArray()[0];
+				Iterator it = temp.iterator();
+				node.value = (int) it.next();
 				return node;
 			}
 		} else if (node.type == 2) {
@@ -151,16 +157,17 @@ public final class Main {
 				temp.remove(node.right);
 			}
 			if (temp.size() == 1) {
+				Iterator it = temp.iterator();
 				if (0 == node.left && 0 != node.right) {
-					node.left = (int) temp.toArray()[0];
+					node.left = (int) it.next();
 				} else if (0 != node.left && 0 == node.right) {
-					node.right = (int) temp.toArray()[0];
+					node.right = (int) it.next();
 				}
 				return node;
 			} else if (temp.size() == 2) {
-				Object[] valArray = temp.toArray();
-				int small = (int) valArray[0];
-				int large = (int) valArray[1];
+				Iterator it = temp.iterator();
+				int small = (int) it.next();
+				int large = (int) it.next();
 				if (small > large) {
 					int tempValue = small;
 					small = large;
