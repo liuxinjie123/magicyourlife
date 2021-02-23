@@ -8,10 +8,12 @@ import java.util.Set;
 public class FillNineForm {
     static int size = 6;
     static Node[][] buf = new Node[size][size];
+    static int[][] intBuf = new int[size][size+3];
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         for (int i=0; i<size; i++) {
+            int k=0;
             for (int j=0; j<size; j++) {
                 Node node = new Node();
                 node.row = i;
@@ -20,13 +22,19 @@ public class FillNineForm {
                 if (str.contains("/")) {
                     String[] nums = str.split("/");
                     node.type = 2;
-                    node.left = nums[0].equals("-") ? 0: Integer.valueOf(nums[0]);
-                    node.right = nums[1].equals("-") ? 0: Integer.valueOf(nums[1]);
+                    int left = nums[0].equals("-") ? 0: Integer.valueOf(nums[0]);
+                    int right = nums[1].equals("-") ? 0: Integer.valueOf(nums[1]);
+                    node.left = left;
+                    node.right = right;
                     buf[i][j] = node;
+                    intBuf[i][k++] = left;
+                    intBuf[i][k++] = right;
                 } else {
                     node.type = 1;
-                    node.value = str.equals("-") ? 0:Integer.valueOf(str).intValue();
+                    int value = str.equals("-") ? 0:Integer.valueOf(str);
+                    node.value = value;
                     buf[i][j] = node;
+                    intBuf[i][k++] = value;
                 }
             }
         }
@@ -214,10 +222,29 @@ public class FillNineForm {
             }
         }
 
-        if (node.type == 1 && temp.size() == 1) {
-            Iterator it = temp.iterator();
-            node.value = (int) it.next();
-            return node;
+        // 删除数据 intBuf 中，行列重复的
+        int l = 0;
+        for (int i=0; i<=node.column; i++) {
+            if (buf[node.row][i].type == 1) {
+                l++;
+            } else {
+                l += 2;
+            }
+        }
+        for (int i=0; i<size+3; i++) {
+            if ()
+        }
+
+        if (node.type == 1) {
+            if (temp.size() == 1) {
+                Iterator it = temp.iterator();
+                node.value = (int) it.next();
+                return node;
+            } else if (temp.size() == 2) {
+                Iterator it = temp.iterator();
+                node.value = (int) it.next();
+                return node;
+            }
         } else if (node.type == 2) {
             if (temp.size() == 1) {
                 Iterator it = temp.iterator();
