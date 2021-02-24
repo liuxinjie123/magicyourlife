@@ -272,6 +272,20 @@ public class Main {
                 }
             }
         }
+
+        // type=2时，删除大于右边的值 或 小于左边的值
+        if (2 == node.type) {
+            if (0 != node.left && 0 == node.right) {
+                for (int i=1; i<node.left; i++) {
+                    temp.remove(i);
+                }
+            }
+            if (0 == node.left && 0 != node.right) {
+                for (int i=node.right+1; i<=9; i++) {
+                    temp.remove(i);
+                }
+            }
+        }
         return temp;
 	}
 
@@ -360,46 +374,6 @@ public class Main {
                     		}
                     	}
                 	}
-
-                    if ((times == 2 && cycles > 20)) {
-                        for (int i=m; i<m+2; i++) {
-                            for (int j=n; j<n+3; j++) {
-                                Node newNode = buf[i][j];
-                                if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
-                                    if (newNode.type == 1) {
-                                        newNode.value = item;
-                                        buf[i][j] = newNode;
-                                    } else {
-                                        if (0 == newNode.left && 0 != newNode.right) {
-                                            newNode.left = item;
-                                        } else if (0 != newNode.left && 0 == newNode.right) {
-                                            newNode.right = item;
-                                        } else if (0 == newNode.left && 0 == newNode.right) {
-                                            int maxValue = item;
-                                            int minValue = item;
-                                            for (int item1 : newNode.availValues) {
-                                                if (maxValue < item1) {
-                                                    maxValue = item1;
-                                                }
-                                                if (minValue > item1) {
-                                                    minValue = item1;
-                                                }
-                                            }
-                                            if (maxValue == item) {
-                                                newNode.right = item;
-                                            }
-                                            if (minValue == item) {
-                                                newNode.left = item;
-                                            }
-                                        }
-                                        buf[i][j] = newNode;
-                                    }
-                                    temp1.remove(item);
-                                    break look;
-                                }
-                            }
-                        }
-                    }
                 }
         	}
         }
