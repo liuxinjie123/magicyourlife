@@ -267,31 +267,28 @@ public class Main {
         int left = node.row <= 1 ? 0 : (node.row <= 3 ? 2 : 4);
         int right = node.column <= 2 ? 0 : 3;
 
-        int emptyNums = 0;
         for (int m=left; m<left+2; m++) {
             for (int n=right; n<right+3; n++) {
                 Node newNode = buf[m][n];
                 if (1 == newNode.type) {
                     if (0 != newNode.value) {
                         temp.remove(newNode.value);
-                    } else {
-                        emptyNums++;
                     }
                 } else {
                     if (0 != newNode.left) {
                         temp.remove(newNode.left);
-                    } else {
-                        emptyNums++;
                     }
                     if (0 != newNode.right) {
                         temp.remove(newNode.right);
-                    } else {
-                        emptyNums++;
                     }
                 }
             }
         }
-        avail[node.row][node.column] = temp;
+        if (temp == null) {
+            avail[node.row][node.column] = new HashSet<>();
+        } else {
+            avail[node.row][node.column] = temp;
+        }
         removeErrorTwo();
     }
 
@@ -311,10 +308,26 @@ public class Main {
                 }
             }
         }
+
+        for (int i=0; i<size; i++) {
+            for (int j=0; j<size; j++) {
+                for (int k=0; k<size; k++) {
+                    if (j != k) {
+                        if (checkEquals(avail[j][i], avail[k][i])) {
+                            for (int l=0; l<size; l++) {
+                                if (l != j && l != k && null != avail[l][i]) {
+                                    avail[l][i].removeAll(avail[j][i]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static boolean checkEquals(Set set1, Set set2) {
-        if (null == set1 || null == set2 || set1.size() != set2.size()) {
+        if (null == set1 || null == set2 || set1.size() != set2.size() || set1.size() != 2) {
             return false;
         }
         for (Object item : set1) {
@@ -345,6 +358,7 @@ public class Main {
                 	for (int j=n; j<n+3; j++) {
                 		Node newNode = buf[i][j];
                 		if (!newNode.isNotEmpty()) {
+                		    removeErrorOne(new Node());
                 			newNode.availValues = avail[newNode.row][newNode.column];
                 			buf[i][j] = newNode;
                 		}
@@ -366,7 +380,7 @@ public class Main {
                 	for (int i=m; i<m+2; i++) {
                     	for (int j=n; j<n+3; j++) {
                     		Node newNode = buf[i][j];
-                    		if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                    		if (!newNode.isNotEmpty() && null != newNode.availValues && newNode.availValues.contains(item)) {
                     			times++;
                     		}
                     	}
@@ -432,6 +446,7 @@ public class Main {
             for (int j=0; j<size; j++) {
                 Node newNode = buf[j][i];
                 if (!newNode.isNotEmpty()) {
+                    removeErrorOne(newNode);
                     newNode.availValues = avail[newNode.row][newNode.column];
                 }
                 buf[j][i] = newNode;
@@ -451,7 +466,7 @@ public class Main {
                 int times = 0;
                 for (int k=0; k<size; k++) {
                     Node newNode = buf[k][i];
-                    if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                    if (!newNode.isNotEmpty() && null != newNode.availValues && newNode.availValues.contains(item)) {
                         times++;
                     }
                 }
@@ -514,6 +529,7 @@ public class Main {
             for (int j=0; j<size; j++) {
                 Node newNode = buf[i][j];
                 if (!newNode.isNotEmpty()) {
+                    removeErrorOne(newNode);
                     newNode.availValues = avail[newNode.row][newNode.column];
                 }
                 buf[i][j] = newNode;
@@ -533,7 +549,7 @@ public class Main {
                 int times = 0;
                 for (int k=0; k<size; k++) {
                     Node newNode = buf[i][k];
-                    if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                    if (!newNode.isNotEmpty() && null != newNode.availValues && newNode.availValues.contains(item)) {
                         times++;
                     }
                 }
