@@ -177,7 +177,7 @@ public class Main {
                     return node;
                 }
 //                if (times > 5) {
-                	findRightValueTeam();
+                	findRightValueTeam(times);
 //                }
             }
         }
@@ -275,7 +275,8 @@ public class Main {
         return temp;
 	}
 
-	private static void findRightValueTeam() {
+	private static void findRightValueTeam(int cycles) {
+        look:
         for (int m=0; m<6; m+=2) {
         	for (int n=0; n<6; n+=3) {
                 Set<Integer> temp1 = new HashSet<Integer>(){{
@@ -310,42 +311,6 @@ public class Main {
                 	}
                 }
 
-//                for (int i=m; i<m+2; i++) {
-//                    for (int j=n; j<n+3; j++) {
-//                        Node newNode = buf[i][j];
-//                        if (newNode.availValues.size() == 1) {
-//                            if (newNode.type == 1) {
-//                                Iterator iterator = newNode.availValues.iterator();
-//                                newNode.value = (int) iterator.next();
-//                                buf[i][j] = newNode;
-//                            } else {
-//                                Iterator iterator = newNode.availValues.iterator();
-//                                if (0 == newNode.left && 0 != newNode.right) {
-//                                    newNode.left = (int) iterator.next();
-//                                } else if (0 != newNode.left && 0 == newNode.right) {
-//                                    newNode.right = (int) iterator.next();
-//                                }
-//                                buf[i][j] = newNode;
-//                            }
-//                        } else if (newNode.availValues.size() == 2) {
-//                            if (2 == newNode.type) {
-//                                Iterator iterator = newNode.availValues.iterator();
-//                                int small = (int) iterator.next();
-//                                int large = (int) iterator.next();
-//                                if (small > large) {
-//                                    int temp = small;
-//                                    small = large;
-//                                    large = temp;
-//                                }
-//                                newNode.left = small;
-//                                newNode.right = large;
-//                                buf[i][j] = newNode;
-//                            }
-//                        }
-//                    }
-//                }
-
-//        		look:
                 for (int item : temp1) {
                     int times = 0;
                 	for (int i=m; i<m+2; i++) {
@@ -389,12 +354,52 @@ public class Main {
                     					}
                     					buf[i][j] = newNode;            					
                     				}
-//                                    temp1.remove(item);
-//                                    break look;
+                                    temp1.remove(item);
+                                    break look;
                     			}
                     		}
                     	}
                 	}
+
+                    if ((times == 2 && cycles > 20)) {
+                        for (int i=m; i<m+2; i++) {
+                            for (int j=n; j<n+3; j++) {
+                                Node newNode = buf[i][j];
+                                if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                                    if (newNode.type == 1) {
+                                        newNode.value = item;
+                                        buf[i][j] = newNode;
+                                    } else {
+                                        if (0 == newNode.left && 0 != newNode.right) {
+                                            newNode.left = item;
+                                        } else if (0 != newNode.left && 0 == newNode.right) {
+                                            newNode.right = item;
+                                        } else if (0 == newNode.left && 0 == newNode.right) {
+                                            int maxValue = item;
+                                            int minValue = item;
+                                            for (int item1 : newNode.availValues) {
+                                                if (maxValue < item1) {
+                                                    maxValue = item1;
+                                                }
+                                                if (minValue > item1) {
+                                                    minValue = item1;
+                                                }
+                                            }
+                                            if (maxValue == item) {
+                                                newNode.right = item;
+                                            }
+                                            if (minValue == item) {
+                                                newNode.left = item;
+                                            }
+                                        }
+                                        buf[i][j] = newNode;
+                                    }
+                                    temp1.remove(item);
+                                    break look;
+                                }
+                            }
+                        }
+                    }
                 }
         	}
         }
