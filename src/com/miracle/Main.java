@@ -366,7 +366,7 @@ public class Main {
                     							newNode.left = item;
                     						}
                     					}
-                    					newNode.availValues.remove(item);
+//                    					newNode.availValues.remove(item);
                     					buf[i][j] = newNode;            					
                     				}
                                     temp1.remove(item);
@@ -450,7 +450,7 @@ public class Main {
                                         newNode.left = item;
                                     }
                                 }
-                                newNode.availValues.remove(item);
+//                                newNode.availValues.remove(item);
                                 buf[k][i] = newNode;
                             }
                             temp1.remove(item);
@@ -532,7 +532,7 @@ public class Main {
                                         newNode.left = item;
                                     }
                                 }
-                                newNode.availValues.remove(item);
+//                                newNode.availValues.remove(item);
                                 buf[i][k] = newNode;
                             }
                             temp1.remove(item);
