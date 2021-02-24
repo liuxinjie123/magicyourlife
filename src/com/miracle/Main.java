@@ -8,6 +8,7 @@ import java.util.Set;
 public class Main {
     static int size = 6;
     static Node[][] buf = new Node[size][size];
+    static Set<Integer>[][] avail = new HashSet[size][size];
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -114,7 +115,8 @@ public class Main {
     }
 
     static Node findRightValue(Node node, int times) {
-        Set<Integer> temp = removeErrorOne(node);
+        removeErrorOne(node);
+        Set<Integer> temp = avail[node.row][node.column];
         
         if (node.type == 1) {
         	if (temp.size() == 1) {
@@ -185,7 +187,7 @@ public class Main {
     }
     
 
-    private static Set<Integer> removeErrorOne(Node node) {
+    private static void removeErrorOne(Node node) {
     	Set<Integer> temp = new HashSet<Integer>(){{
             add(1);
             add(2);
@@ -197,6 +199,21 @@ public class Main {
             add(8);
             add(9);
         }};
+
+        // type=2时，删除大于右边的值 或 小于左边的值
+        if (2 == node.type) {
+            if (0 != node.left && 0 == node.right) {
+                for (int i=1; i<node.left; i++) {
+                    temp.remove(i);
+                }
+            }
+            if (0 == node.left && 0 != node.right) {
+                for (int i=node.right+1; i<=9; i++) {
+                    temp.remove(i);
+                }
+            }
+        }
+
     	// 删除同行已存在的数据
         for (int i=0; i<size; i++) {
             if (i == node.column) {
@@ -250,46 +267,65 @@ public class Main {
         int left = node.row <= 1 ? 0 : (node.row <= 3 ? 2 : 4);
         int right = node.column <= 2 ? 0 : 3;
 
+        int emptyNums = 0;
         for (int m=left; m<left+2; m++) {
             for (int n=right; n<right+3; n++) {
                 Node newNode = buf[m][n];
-                if (newNode.isNotEmpty()) {
-                    if (1 == newNode.type) {
+                if (1 == newNode.type) {
+                    if (0 != newNode.value) {
                         temp.remove(newNode.value);
                     } else {
-                        temp.remove(newNode.left);
-                        temp.remove(newNode.right);
+                        emptyNums++;
                     }
                 } else {
-                    if (2 == newNode.type) {
-                        if (0 != newNode.left) {
-                            temp.remove(newNode.left);
-                        }
-                        if (0 != newNode.right) {
-                            temp.remove(newNode.right);
+                    if (0 != newNode.left) {
+                        temp.remove(newNode.left);
+                    } else {
+                        emptyNums++;
+                    }
+                    if (0 != newNode.right) {
+                        temp.remove(newNode.right);
+                    } else {
+                        emptyNums++;
+                    }
+                }
+            }
+        }
+        avail[node.row][node.column] = temp;
+        removeErrorTwo();
+    }
+
+    private static void removeErrorTwo() {
+        for (int i=0; i<size; i++) {
+            for (int j=0; j<size; j++) {
+                for (int k=0; k<size; k++) {
+                    if (j != k) {
+                        if (checkEquals(avail[i][j], avail[i][k])) {
+                            for (int l=0; l<size; l++) {
+                                if (l != j && l != k && null != avail[i][l]) {
+                                    avail[i][l].removeAll(avail[i][j]);
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
 
-        // type=2时，删除大于右边的值 或 小于左边的值
-        if (2 == node.type) {
-            if (0 != node.left && 0 == node.right) {
-                for (int i=1; i<node.left; i++) {
-                    temp.remove(i);
-                }
-            }
-            if (0 == node.left && 0 != node.right) {
-                for (int i=node.right+1; i<=9; i++) {
-                    temp.remove(i);
-                }
+    private static boolean checkEquals(Set set1, Set set2) {
+        if (null == set1 || null == set2 || set1.size() != set2.size()) {
+            return false;
+        }
+        for (Object item : set1) {
+            if (!set2.contains(item)) {
+                return false;
             }
         }
-        return temp;
-	}
+        return true;
+    }
 
-	private static void findRightValueTeam(int cycles) {
+    private static void findRightValueTeam(int cycles) {
         look:
         for (int m=0; m<6; m+=2) {
         	for (int n=0; n<6; n+=3) {
@@ -309,7 +345,7 @@ public class Main {
                 	for (int j=n; j<n+3; j++) {
                 		Node newNode = buf[i][j];
                 		if (!newNode.isNotEmpty()) {
-                			newNode.availValues = removeErrorOne(newNode);
+                			newNode.availValues = avail[newNode.row][newNode.column];
                 			buf[i][j] = newNode;
                 		}
                 		if (newNode.type == 1 && newNode.value != 0) {
@@ -396,7 +432,7 @@ public class Main {
             for (int j=0; j<size; j++) {
                 Node newNode = buf[j][i];
                 if (!newNode.isNotEmpty()) {
-                    newNode.availValues = removeErrorOne(newNode);
+                    newNode.availValues = avail[newNode.row][newNode.column];
                 }
                 buf[j][i] = newNode;
                 if (1 == newNode.type && 0 != newNode.value) {
@@ -478,7 +514,7 @@ public class Main {
             for (int j=0; j<size; j++) {
                 Node newNode = buf[i][j];
                 if (!newNode.isNotEmpty()) {
-                    newNode.availValues = removeErrorOne(newNode);
+                    newNode.availValues = avail[newNode.row][newNode.column];
                 }
                 buf[i][j] = newNode;
                 if (1 == newNode.type && 0 != newNode.value) {
@@ -532,7 +568,6 @@ public class Main {
                                         newNode.left = item;
                                     }
                                 }
-//                                newNode.availValues.remove(item);
                                 buf[i][k] = newNode;
                             }
                             temp1.remove(item);
