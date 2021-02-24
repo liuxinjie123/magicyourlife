@@ -51,7 +51,29 @@ public class Main {
                         }
                     }
                 }
-            }            
+            }
+
+            System.out.println();
+            for (int i=0; i<size; i++) {
+                for (int j=0; j<size; j++) {
+                    Node node = buf[i][j];
+                    if (j != size - 1) {
+                        if (node.type == 1) {
+                            System.out.print(node.value + " ");
+                        } else {
+                            System.out.print(node.left + "/" + node.right + " ");
+                        }
+                    } else {
+                        if (node.type == 1) {
+                            System.out.print(node.value);
+                        } else {
+                            System.out.print(node.left + "/" + node.right);
+                        }
+                    }
+                }
+                System.out.println();
+            }
+
         }
         
         System.out.println();
@@ -80,7 +102,7 @@ public class Main {
 	static class Node {
         int row;
         int column;
-        // 1 一个值， 2， 2个值，分左右值
+        // 1-鍗曚釜鏁帮紝 2-2涓暟
         int type;
         int value;
         int left;
@@ -92,19 +114,7 @@ public class Main {
     }
 
     static Node findRightValue(Node node, int times) {
-        Set<Integer> temp = new HashSet<Integer>(){{
-            add(1);
-            add(2);
-            add(3);
-            add(4);
-            add(5);
-            add(6);
-            add(7);
-            add(8);
-            add(9);
-        }};
-        
-        temp = removeErrorOne(node);
+        Set<Integer> temp = removeErrorOne(node);
         
         if (node.type == 1) {
         	if (temp.size() == 1) {
@@ -166,9 +176,9 @@ public class Main {
                     node.right = large;
                     return node;
                 }
-                if (times > 20) {
+//                if (times > 5) {
                 	findRightValueTeam();
-                }
+//                }
             }
         }
         return node;
@@ -187,7 +197,7 @@ public class Main {
             add(8);
             add(9);
         }};
-    	// 删除同行中已存在的数字
+    	// 鍒犻櫎鍚岃宸插瓨鍦ㄧ殑鏁版嵁
         for (int i=0; i<size; i++) {
             if (i == node.column) {
                 continue;
@@ -211,7 +221,7 @@ public class Main {
                 }
             }
         }
-        // 删除同列的元素
+        // 鍒犻櫎鍚屽垪宸插瓨鍦ㄧ殑鏁版嵁
         for (int i=0; i<size; i++) {
             if (i == node.row) {
                 continue;
@@ -236,7 +246,7 @@ public class Main {
             }
         }
 
-        // 删除小方框中的元素
+        // 鍒犻櫎 3*2 鏂规涓殑鏁版嵁
         int left = node.row <= 1 ? 0 : (node.row <= 3 ? 2 : 4);
         int right = node.column <= 2 ? 0 : 3;
 
@@ -265,24 +275,21 @@ public class Main {
         return temp;
 	}
 
-
 	private static void findRightValueTeam() {
-		// 第一个小组 3*2
-		Set<Integer> temp1 = new HashSet<Integer>(){{
-            add(1);
-            add(2);
-            add(3);
-            add(4);
-            add(5);
-            add(6);
-            add(7);
-            add(8);
-            add(9);
-        }};
-
         for (int m=0; m<6; m+=2) {
         	for (int n=0; n<6; n+=3) {
-        		
+                Set<Integer> temp1 = new HashSet<Integer>(){{
+                    add(1);
+                    add(2);
+                    add(3);
+                    add(4);
+                    add(5);
+                    add(6);
+                    add(7);
+                    add(8);
+                    add(9);
+                }};
+
         		for (int i=m; i<m+2; i++) {
                 	for (int j=n; j<n+3; j++) {
                 		Node newNode = buf[i][j];
@@ -302,12 +309,47 @@ public class Main {
                 		}
                 	}
                 }
-                
-        		look:
+
+//                for (int i=m; i<m+2; i++) {
+//                    for (int j=n; j<n+3; j++) {
+//                        Node newNode = buf[i][j];
+//                        if (newNode.availValues.size() == 1) {
+//                            if (newNode.type == 1) {
+//                                Iterator iterator = newNode.availValues.iterator();
+//                                newNode.value = (int) iterator.next();
+//                                buf[i][j] = newNode;
+//                            } else {
+//                                Iterator iterator = newNode.availValues.iterator();
+//                                if (0 == newNode.left && 0 != newNode.right) {
+//                                    newNode.left = (int) iterator.next();
+//                                } else if (0 != newNode.left && 0 == newNode.right) {
+//                                    newNode.right = (int) iterator.next();
+//                                }
+//                                buf[i][j] = newNode;
+//                            }
+//                        } else if (newNode.availValues.size() == 2) {
+//                            if (2 == newNode.type) {
+//                                Iterator iterator = newNode.availValues.iterator();
+//                                int small = (int) iterator.next();
+//                                int large = (int) iterator.next();
+//                                if (small > large) {
+//                                    int temp = small;
+//                                    small = large;
+//                                    large = temp;
+//                                }
+//                                newNode.left = small;
+//                                newNode.right = large;
+//                                buf[i][j] = newNode;
+//                            }
+//                        }
+//                    }
+//                }
+
+//        		look:
                 for (int item : temp1) {
-                	int times = 0;
+                    int times = 0;
                 	for (int i=m; i<m+2; i++) {
-                    	for (int j=m; j<n+3; j++) {
+                    	for (int j=n; j<n+3; j++) {
                     		Node newNode = buf[i][j];
                     		if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
                     			times++;
@@ -318,10 +360,11 @@ public class Main {
                 		for (int i=m; i<m+2; i++) {
                     		for (int j=n; j<n+3; j++) {
                     			Node newNode = buf[i][j];
-                    			if (newNode.availValues.contains(item)) {
+                    			if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
                     				if (newNode.type == 1) {
                     					newNode.value = item;
-                    				} else {
+                                        buf[i][j] = newNode;
+                                    } else {
                     					if (0 == newNode.left && 0 != newNode.right) {
                     						newNode.left = item;
                     					} else if (0 != newNode.left && 0 == newNode.right) {
@@ -345,8 +388,9 @@ public class Main {
                     						}
                     					}
                     					buf[i][j] = newNode;            					
-                    				}   
-                    				break look;
+                    				}
+//                                    temp1.remove(item);
+//                                    break look;
                     			}
                     		}
                     	}
@@ -354,9 +398,6 @@ public class Main {
                 }
         	}
         }
-        
-        
-		
 	}
     
 }
