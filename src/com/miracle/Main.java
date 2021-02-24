@@ -366,6 +366,7 @@ public class Main {
                     							newNode.left = item;
                     						}
                     					}
+                    					newNode.availValues.remove(item);
                     					buf[i][j] = newNode;            					
                     				}
                                     temp1.remove(item);
@@ -376,6 +377,170 @@ public class Main {
                 	}
                 }
         	}
+        }
+
+        loop:
+        for (int i=0; i<size; i++) {
+            Set<Integer> temp1 = new HashSet<Integer>(){{
+                add(1);
+                add(2);
+                add(3);
+                add(4);
+                add(5);
+                add(6);
+                add(7);
+                add(8);
+                add(9);
+            }};
+
+            for (int j=0; j<size; j++) {
+                Node newNode = buf[j][i];
+                if (!newNode.isNotEmpty()) {
+                    newNode.availValues = removeErrorOne(newNode);
+                }
+                buf[j][i] = newNode;
+                if (1 == newNode.type && 0 != newNode.value) {
+                    temp1.remove(newNode.value);
+                } else if (2 == newNode.type) {
+                    if (0 != newNode.left) {
+                        temp1.remove(newNode.left);
+                    }
+                    if (0 != newNode.right) {
+                        temp1.remove(newNode.right);
+                    }
+                }
+            }
+
+            for (int item : temp1) {
+                int times = 0;
+                for (int k=0; k<size; k++) {
+                    Node newNode = buf[k][i];
+                    if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                        times++;
+                    }
+                }
+
+                if (times == 1) {
+                    for (int k = 0; k < size; k++) {
+                        Node newNode = buf[k][i];
+                        if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                            if (newNode.type == 1) {
+                                newNode.value = item;
+                                buf[k][i] = newNode;
+                            } else {
+                                if (0 == newNode.left && 0 != newNode.right) {
+                                    newNode.left = item;
+                                } else if (0 != newNode.left && 0 == newNode.right) {
+                                    newNode.right = item;
+                                } else if (0 == newNode.left && 0 == newNode.right) {
+                                    int maxValue = item;
+                                    int minValue = item;
+                                    for (int item1 : newNode.availValues) {
+                                        if (maxValue < item1) {
+                                            maxValue = item1;
+                                        }
+                                        if (minValue > item1) {
+                                            minValue = item1;
+                                        }
+                                    }
+                                    if (maxValue == item) {
+                                        newNode.right = item;
+                                    }
+                                    if (minValue == item) {
+                                        newNode.left = item;
+                                    }
+                                }
+                                newNode.availValues.remove(item);
+                                buf[k][i] = newNode;
+                            }
+                            temp1.remove(item);
+                            break loop;
+                        }
+                    }
+                }
+            }
+        }
+
+        loop1:
+        for (int i=0; i<size; i++) {
+            Set<Integer> temp1 = new HashSet<Integer>(){{
+                add(1);
+                add(2);
+                add(3);
+                add(4);
+                add(5);
+                add(6);
+                add(7);
+                add(8);
+                add(9);
+            }};
+
+            for (int j=0; j<size; j++) {
+                Node newNode = buf[i][j];
+                if (!newNode.isNotEmpty()) {
+                    newNode.availValues = removeErrorOne(newNode);
+                }
+                buf[i][j] = newNode;
+                if (1 == newNode.type && 0 != newNode.value) {
+                    temp1.remove(newNode.value);
+                } else if (2 == newNode.type) {
+                    if (0 != newNode.left) {
+                        temp1.remove(newNode.left);
+                    }
+                    if (0 != newNode.right) {
+                        temp1.remove(newNode.right);
+                    }
+                }
+            }
+
+            for (int item : temp1) {
+                int times = 0;
+                for (int k=0; k<size; k++) {
+                    Node newNode = buf[i][k];
+                    if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                        times++;
+                    }
+                }
+
+                if (times == 1) {
+                    for (int k = 0; k < size; k++) {
+                        Node newNode = buf[i][k];
+                        if (!newNode.isNotEmpty() && newNode.availValues.contains(item)) {
+                            if (newNode.type == 1) {
+                                newNode.value = item;
+                                buf[i][k] = newNode;
+                            } else {
+                                if (0 == newNode.left && 0 != newNode.right) {
+                                    newNode.left = item;
+                                } else if (0 != newNode.left && 0 == newNode.right) {
+                                    newNode.right = item;
+                                } else if (0 == newNode.left && 0 == newNode.right) {
+                                    int maxValue = item;
+                                    int minValue = item;
+                                    for (int item1 : newNode.availValues) {
+                                        if (maxValue < item1) {
+                                            maxValue = item1;
+                                        }
+                                        if (minValue > item1) {
+                                            minValue = item1;
+                                        }
+                                    }
+                                    if (maxValue == item) {
+                                        newNode.right = item;
+                                    }
+                                    if (minValue == item) {
+                                        newNode.left = item;
+                                    }
+                                }
+                                newNode.availValues.remove(item);
+                                buf[i][k] = newNode;
+                            }
+                            temp1.remove(item);
+                            break loop1;
+                        }
+                    }
+                }
+            }
         }
 	}
     
