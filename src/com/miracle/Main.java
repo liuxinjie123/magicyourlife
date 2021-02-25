@@ -41,6 +41,15 @@ public class Main {
         while (count < 36) {
             count = 0;
             times++;
+            
+            for (int i=0; i<size; i++) {
+                for (int j=0; j<size; j++) {
+                	removeErrorOne(buf[i][j]);
+                }
+            }
+            
+            removeErrorTwo();
+            
             for (int i=0; i<size; i++) {
                 for (int j=0; j<size; j++) {
                     if (buf[i][j].isNotEmpty()) {
@@ -54,6 +63,8 @@ public class Main {
                 }
             }
 
+            
+            
             System.out.println();
             for (int i=0; i<size; i++) {
                 for (int j=0; j<size; j++) {
@@ -114,19 +125,18 @@ public class Main {
         Set<Integer> availValues = new HashSet<>();
     }
 
-    static Node findRightValue(Node node, int times) {
-        removeErrorOne(node);
+    static Node findRightValue(Node node, int times) {        
         Set<Integer> temp = avail[node.row][node.column];
         
         if (node.type == 1) {
         	if (temp.size() == 1) {
-        		Iterator it = temp.iterator();
+        		Iterator<Integer> it = temp.iterator();
             	node.value = (int) it.next();
             	return node;
         	}
         } else if (node.type == 2) {
             if (temp.size() == 1) {
-                Iterator it = temp.iterator();
+                Iterator<Integer> it = temp.iterator();
                 if (0 == node.left && 0 != node.right) {
                     node.left = (int) it.next();
                 } else if (0 != node.left && 0 == node.right) {
@@ -134,7 +144,7 @@ public class Main {
                 }
                 return node;
             } else if (temp.size() == 2) {
-                Iterator it = temp.iterator();
+                Iterator<Integer> it = temp.iterator();
                 int small = (int) it.next();
                 int large = (int) it.next();
                 if (small > large) {
@@ -284,12 +294,7 @@ public class Main {
                 }
             }
         }
-        if (temp == null) {
-            avail[node.row][node.column] = new HashSet<>();
-        } else {
-            avail[node.row][node.column] = temp;
-        }
-        removeErrorTwo();
+        avail[node.row][node.column] = temp;        
     }
 
     private static void removeErrorTwo() {
@@ -297,9 +302,9 @@ public class Main {
             for (int j=0; j<size; j++) {
                 for (int k=0; k<size; k++) {
                     if (j != k) {
-                        if (checkEquals(avail[i][j], avail[i][k])) {
+                        if (!buf[i][j].isNotEmpty() && !buf[i][k].isNotEmpty() && checkEquals(avail[i][j], avail[i][k])) {
                             for (int l=0; l<size; l++) {
-                                if (l != j && l != k && null != avail[i][l]) {
+                                if (l != j && l != k && !buf[i][l].isNotEmpty() && null != avail[i][l]) {
                                     avail[i][l].removeAll(avail[i][j]);
                                 }
                             }
@@ -313,9 +318,9 @@ public class Main {
             for (int j=0; j<size; j++) {
                 for (int k=0; k<size; k++) {
                     if (j != k) {
-                        if (checkEquals(avail[j][i], avail[k][i])) {
+                        if (!buf[j][i].isNotEmpty() && !buf[k][i].isNotEmpty() && checkEquals(avail[j][i], avail[k][i])) {
                             for (int l=0; l<size; l++) {
-                                if (l != j && l != k && null != avail[l][i]) {
+                                if (l != j && l != k && !buf[l][i].isNotEmpty() && null != avail[l][i]) {
                                     avail[l][i].removeAll(avail[j][i]);
                                 }
                             }
@@ -324,18 +329,49 @@ public class Main {
                 }
             }
         }
+        
+        for (int m=0; m<6; m+=2) {
+        	for (int n=0; n<6; n+=3) {
+        		
+        		for (int i=m; i<m+2; i++) {
+                	for (int j=n; j<n+3; j++) {
+                		
+                		for (int k=m; k<m+2; k++) {
+                			for (int l=n; l<n+3; l++) {
+                				
+                				if (!(i==k && j==l) && !buf[i][j].isNotEmpty() && !buf[k][l].isNotEmpty()) {
+	                				if (checkEquals(avail[i][j], avail[k][l])) {
+	                					for (int x=m; x<m+2; x++) {
+	                                		for (int y=n; y<n+3; y++) {
+	                                			if (!(x==i && y==j) && !(x==k && y==l)) {
+	                                				avail[x][y].remove(avail[i][j]);
+	                                			}
+	                                		}
+	                					}
+	                				}
+                				}
+                			}
+                		}
+                	}
+        		}
+        	}
+        }
     }
 
-    private static boolean checkEquals(Set set1, Set set2) {
+    private static boolean checkEquals(Set<Integer> set1, Set<Integer> set2) {
         if (null == set1 || null == set2 || set1.size() != set2.size() || set1.size() != 2) {
             return false;
         }
-        for (Object item : set1) {
-            if (!set2.contains(item)) {
-                return false;
-            }
+        Iterator<Integer> it1 = set1.iterator();
+        int num1 = it1.next();
+        int num2 = it1.next();
+        Iterator<Integer> it2 = set2.iterator();
+        int num3 = it2.next();
+        int num4 = it2.next();
+        if ((num1 == num3 && num2 == num4) || (num1 == num4 && num2 == num3)) {
+        	return true;
         }
-        return true;
+        return false;
     }
 
     private static void findRightValueTeam(int cycles) {
@@ -358,7 +394,8 @@ public class Main {
                 	for (int j=n; j<n+3; j++) {
                 		Node newNode = buf[i][j];
                 		if (!newNode.isNotEmpty()) {
-                		    removeErrorOne(new Node());
+                		    removeErrorOne(newNode);
+                		    removeErrorTwo();
                 			newNode.availValues = avail[newNode.row][newNode.column];
                 			buf[i][j] = newNode;
                 		}
@@ -447,6 +484,7 @@ public class Main {
                 Node newNode = buf[j][i];
                 if (!newNode.isNotEmpty()) {
                     removeErrorOne(newNode);
+                    removeErrorTwo();
                     newNode.availValues = avail[newNode.row][newNode.column];
                 }
                 buf[j][i] = newNode;
@@ -530,6 +568,7 @@ public class Main {
                 Node newNode = buf[i][j];
                 if (!newNode.isNotEmpty()) {
                     removeErrorOne(newNode);
+                    removeErrorTwo();
                     newNode.availValues = avail[newNode.row][newNode.column];
                 }
                 buf[i][j] = newNode;
