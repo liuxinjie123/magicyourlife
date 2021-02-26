@@ -63,6 +63,7 @@ public class Main {
                 }
             }
 
+            findRightValueTeam(times);
             
             
             System.out.println();
@@ -131,22 +132,22 @@ public class Main {
         if (node.type == 1) {
         	if (temp.size() == 1) {
         		Iterator<Integer> it = temp.iterator();
-            	node.value = (int) it.next();
+            	node.value = it.next();
             	return node;
         	}
         } else if (node.type == 2) {
             if (temp.size() == 1) {
                 Iterator<Integer> it = temp.iterator();
                 if (0 == node.left && 0 != node.right) {
-                    node.left = (int) it.next();
+                    node.left = it.next();
                 } else if (0 != node.left && 0 == node.right) {
-                    node.right = (int) it.next();
+                    node.right = it.next();
                 }
                 return node;
             } else if (temp.size() == 2) {
                 Iterator<Integer> it = temp.iterator();
-                int small = (int) it.next();
-                int large = (int) it.next();
+                int small = it.next();
+                int large = it.next();
                 if (small > large) {
                     int tempValue = small;
                     small = large;
@@ -188,9 +189,6 @@ public class Main {
                     node.right = large;
                     return node;
                 }
-//                if (times > 5) {
-                	findRightValueTeam(times);
-//                }
             }
         }
         return node;
